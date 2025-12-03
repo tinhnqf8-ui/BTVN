@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="" id="form">
+      <input type="text" id="input" />
+      <button>Submit</button>
+    </form>
+    <ul id="list"></ul>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.1/redux.js"
+      integrity="sha512-Olr8rkMYuxq3KpAPjYA/mAVYe7EIEP4RkhoAvD/qOrlauzE4CTvpQSg/cRX0/5Qreret4aobD0vg1xtjBqR7VA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      const form = document.querySelector("#form");
+      const input = document.querySelector("#input");
+      const list = document.querySelector("#list");
+      const states = [
+        {
+          id: 1,
+          name: "tình",
+        },
+      ];
+      const storeRedux = Redux.createStore((evStates, action) => {
+        switch (action.type) {
+          case "add":
+            return [action.payload, ...evStates];
+            break;
+          default:
+            return evStates;
+            break;
+        }
+      }, states);
+      storeRedux.subscribe(render);
+      console.log(storeRedux.getState());
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        storeRedux.dispatch({
+          type: "add",
+          payload: { id: 12, name: e.target.querySelector("#input").value },
+        });
+      });
+      function render() {
+        const listState = storeRedux.getState()
+          .map((state) => {
+            return `<li data-id="${state.id}">${state.name}</li>`;
+          })
+          .join("");
+        return (list.innerHTML = listState);
+      }
+      render();
+    </script>
+  </body>
+</html>
